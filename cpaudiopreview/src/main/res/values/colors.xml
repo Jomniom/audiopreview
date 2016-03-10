@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#00BBDD</color>
+    <color name="colorPrimaryDark">#0077AA</color>
+    <color name="colorAccent">#FF4488</color>
+    <color name="shader">#33000000</color>
+    <color name="colorBgCirce">#DCDCDC</color>
+    <color name="colorBgBack">#898989</color>
+    <color name="colorProg">#CC00CC</color>
+    <color name="colorControl">#9999FF</color>
+    <color name="colorLoader">#2AD4FF</color>
+</resources>
