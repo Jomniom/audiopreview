@@ -2,8 +2,8 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/AudioPreview.iml" filepath="$PROJECT_DIR$/AudioPreview.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/audiopreview.iml" filepath="$PROJECT_DIR$/audiopreview.iml" />
       <module fileurl="file://$PROJECT_DIR$/cpaudiopreview/cpaudiopreview.iml" filepath="$PROJECT_DIR$/cpaudiopreview/cpaudiopreview.iml" />
     </modules>
   </component>

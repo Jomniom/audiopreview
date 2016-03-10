@@ -3,15 +3,15 @@ package pl.cprojekt.cpaudiopreview;
 import android.content.Context;
 import android.media.MediaPlayer;
 import android.os.Message;
+import android.os.Parcelable;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
 
 import java.io.IOException;
 
+//todo błedy: brak sieci->jest sieć->play
 //todo oprogramować obrót
-//todo wystawnienie w klasie dziedziczącej
-//todo obsługa błedów: reset odtwarzadza
 public class CPAudio extends CPBaseView implements View.OnClickListener, MediaPlayer.OnCompletionListener,
         MediaPlayer.OnPreparedListener, MediaPlayer.OnErrorListener, MediaPlayer.OnBufferingUpdateListener {
 
@@ -27,8 +27,7 @@ public class CPAudio extends CPBaseView implements View.OnClickListener, MediaPl
     private int duration = -1;//todo to bundle saveinstance
     private boolean progress = false;
     private int progressStartPos = 0;
-    private CTRL_MODE ctrlMode = CTRL_MODE.CTRL_PLAY_PAUSE;
-    //private CTRL_MODE ctrlMode = CTRL_MODE.CTRL_PLAY_STOP;
+    private CTRL_MODE ctrlMode = CTRL_MODE.CTRL_PLAY_STOP;
 
     public CPAudio(Context context) {
         super(context);
@@ -72,7 +71,7 @@ public class CPAudio extends CPBaseView implements View.OnClickListener, MediaPl
         this.err = err;//todo save to bundle
     }
 
-    protected void setOnCompletion(CPCompletion completion){
+    protected void setOnCompletion(CPCompletion completion) {
         this.completion = completion;
     }
 
@@ -109,8 +108,8 @@ public class CPAudio extends CPBaseView implements View.OnClickListener, MediaPl
         //walidacja
         audioState = AUDIO_STATE.PREPARING;
         if (isStreaming) {
-            //loaderStart(); // todo przy asyncu sprawdzić zachowanie
             mp.prepareAsync();
+            loaderStart();
         } else {
             boolean exist = CPUtil.localFileExists(audioSrc);
             if (!exist) {
@@ -119,7 +118,6 @@ public class CPAudio extends CPBaseView implements View.OnClickListener, MediaPl
             }
 
             try {
-                loaderStart();
                 mp.prepare();
             } catch (IOException e) {
                 e.printStackTrace();
@@ -127,6 +125,7 @@ public class CPAudio extends CPBaseView implements View.OnClickListener, MediaPl
                 return false;
             }
         }
+
         return true;
     }
 
@@ -212,7 +211,12 @@ public class CPAudio extends CPBaseView implements View.OnClickListener, MediaPl
 
     @Override
     public void onCompletion(MediaPlayer mp) {
-        Log.i(TAG, "zakńczono odtwarzanie");
+        Log.i(TAG, "____ONCOMPLETION że zakończono");
+        if (audioState != AUDIO_STATE.STARTED) {
+            Log.i(TAG, "WYJSCIE " + audioState);
+            return;
+        }
+
         audioState = AUDIO_STATE.PLAYBACK_COMPLETED;
         setProgress(progressStartPos);
         stopProgress();
@@ -222,7 +226,20 @@ public class CPAudio extends CPBaseView implements View.OnClickListener, MediaPl
 
     @Override
     public boolean onError(MediaPlayer mp, int what, int extra) {
-        fireError("onError what: " + what);
+
+        if (audioState == AUDIO_STATE.PREPARING) {
+
+        }
+
+
+        if (what == MediaPlayer.MEDIA_ERROR_IO) {
+            reset();
+            if (audioSrc != null) {
+                //todo sprawdzanie periodyczne sieci, jeśli jest to create()
+            }
+        }
+
+        fireError("onError what: " + what + ", state: " + audioState);
         return false;
     }
 
@@ -231,9 +248,14 @@ public class CPAudio extends CPBaseView implements View.OnClickListener, MediaPl
         /**
          * Gotowy do odtwarzania
          */
+        loaderStop();
+
+        Log.i("X", "________ONPREPARED gotowy do play");
+//        if (mp.isPlaying())
+//            return;
+
         audioState = AUDIO_STATE.PREPARED;
 
-        loaderStop();
         showPlay();
 
         duration = mp.getDuration();
@@ -302,6 +324,15 @@ public class CPAudio extends CPBaseView implements View.OnClickListener, MediaPl
     @Override
     public void onBufferingUpdate(MediaPlayer mp, int percent) {
         //Log.i("x", "Buforowanie percent: " + percent);
+        if (percent == 100)
+            return;
+
+        loaderStart();
+    }
+
+    @Override
+    protected Parcelable onSaveInstanceState() {
+        return super.onSaveInstanceState();
     }
 
     public enum CTRL_MODE {

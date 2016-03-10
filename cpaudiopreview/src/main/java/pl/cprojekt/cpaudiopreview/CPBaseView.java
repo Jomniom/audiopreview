@@ -27,7 +27,8 @@ public class CPBaseView extends View {
             invalidate();
         }
     };
-    private Paint paintBgCircle, paintBgBack, paintProg, paintLoader, playPaint;
+    private Paint paintBgCircle, paintProg, paintLoader, playPaint;
+    private Paint paintBgBack;
     private int colorBgCircle, colorBgBack, colorProg, colorLoader, colorControl;
     private float circleStrokeWidth = 14f;
     private Path playPath = new Path();
@@ -333,6 +334,7 @@ public class CPBaseView extends View {
         bundle.putSerializable("state", state);
         bundle.putBoolean("loaderRun", loaderRun);
         bundle.putInt("progress", progress);
+        CPSaver.save(CPBaseView.class, this);
         return bundle;
     }
 
@@ -348,6 +350,7 @@ public class CPBaseView extends View {
             }
             saveState = bundle.getParcelable("stateInstance");
         }
+
         super.onRestoreInstanceState(saveState);
     }
 
@@ -355,7 +358,7 @@ public class CPBaseView extends View {
         state = VIEW_STATE.STOP;
         invalidate();
     }
-
+//todo ładowanie z url-a loader nie działa
     @Override
     protected synchronized void onDraw(Canvas canvas) {
         super.onDraw(canvas);

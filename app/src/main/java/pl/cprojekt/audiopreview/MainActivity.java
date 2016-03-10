@@ -58,7 +58,7 @@ public class MainActivity extends AppCompatActivity {
         //kontrolki
         audioPreview.setPlayerCtrlColor(Color.parseColor("#5591BF"));
         //progress
-        audioPreview.setPlayerProgressColor(Color.parseColor("#D95858"));
+        audioPreview.setPlayerProgressColor(Color.parseColor("#3333CC"));
         //tło progresu
         audioPreview.setPlayerCtrlBgColor(Color.parseColor("#5F7183"));
 
