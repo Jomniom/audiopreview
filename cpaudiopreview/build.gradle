@@ -1,4 +1,7 @@
 apply plugin: 'com.android.library'
+apply plugin: 'com.jfrog.bintray'
+apply plugin: 'com.github.dcendents.android-maven'
+
 
 android {
     compileSdkVersion 23
@@ -18,8 +21,33 @@ android {
     }
 }
 
+bintray {
+    user =  System.getenv('BINTRAY_USER');
+    key = System.getenv('BINTRAY_API_KEY');
+    pkg {
+        repo = 'maven'
+        name = 'pl.cprojekt.audiopreview' // the name of the package in BinTray
+
+        version {
+            name = '1.0.0-test' // the name of your library project
+            desc = 'This is the first version'
+            released  = '2016-03-11\'T\'15:20:01.000000'
+            vcsTag = '1.0.0' // the version
+        }
+
+        licenses = ['MIT']
+        vcsUrl = 'https://github.com/Jomniom/audiopreview.git' // your GitHub repo
+        websiteUrl = 'https://github.com/Jomniom/audiopreview.git' // your website or whatever has documentation
+    }
+    configurations = ['archives']
+}
+
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     testCompile 'junit:junit:4.12'
     compile 'com.android.support:appcompat-v7:23.1.1'
+    //classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.2'
+    //classpath 'com.android.tools.build:gradle:1.2.3'
+    //classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.4'
+    //classpath 'com.github.dcendents:android-maven-gradle-plugin:1.3'
 }
