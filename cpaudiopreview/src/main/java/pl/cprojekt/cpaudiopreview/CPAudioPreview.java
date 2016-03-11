@@ -37,11 +37,13 @@ public class CPAudioPreview extends CPAudio {
 
     /**
      * Evant end of play
+     *
      * @param completion
      */
     public void setOnCompletion(CPCompletion completion) {
         super.setOnCompletion(completion);
     }
+
     /**
      * Initialize audio
      *
@@ -100,5 +102,12 @@ public class CPAudioPreview extends CPAudio {
 
     protected void setVolume(float leftVolume, float rightVolume) {
         super.setVolume(leftVolume, rightVolume);
+    }
+
+    /**
+     * Call onPause
+     */
+    public void onPause() {
+        super.onPause();
     }
 }

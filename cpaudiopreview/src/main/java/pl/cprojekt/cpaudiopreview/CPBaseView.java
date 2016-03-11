@@ -21,12 +21,7 @@ import android.view.View;
 public class CPBaseView extends View {
 
     protected Context ctx;
-    protected Handler progressHandler = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-            invalidate();
-        }
-    };
+    protected Handler progressHandler = null;
     private Paint paintBgCircle, paintProg, paintLoader, playPaint;
     private Paint paintBgBack;
     private int colorBgCircle, colorBgBack, colorProg, colorLoader, colorControl;
@@ -41,12 +36,7 @@ public class CPBaseView extends View {
     private int loaderStop = 3;
     //prędkość loadera
     private long loaderInterval = 20;
-    private Handler loaderHandler = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-            invalidate();
-        }
-    };
+    private Handler loaderHandler = null;
     private boolean loaderRun = false;
     private int progress = 0;
     private int margin = 16;
@@ -84,6 +74,18 @@ public class CPBaseView extends View {
 
     private void initialize(Context ctx) {
         this.ctx = ctx;
+        loaderHandler = new Handler() {
+            @Override
+            public void handleMessage(Message msg) {
+                invalidate();
+            }
+        };
+        progressHandler = new Handler() {
+            @Override
+            public void handleMessage(Message msg) {
+                invalidate();
+            }
+        };
         initColors();
         iniShapes();
         calculate();
@@ -358,7 +360,7 @@ public class CPBaseView extends View {
         state = VIEW_STATE.STOP;
         invalidate();
     }
-//todo ładowanie z url-a loader nie działa
+
     @Override
     protected synchronized void onDraw(Canvas canvas) {
         super.onDraw(canvas);

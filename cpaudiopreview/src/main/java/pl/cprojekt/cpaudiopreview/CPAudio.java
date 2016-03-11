@@ -10,21 +10,22 @@ import android.view.View;
 
 import java.io.IOException;
 
-//todo błedy: brak sieci->jest sieć->play
+
 //todo oprogramować obrót
+
 public class CPAudio extends CPBaseView implements View.OnClickListener, MediaPlayer.OnCompletionListener,
         MediaPlayer.OnPreparedListener, MediaPlayer.OnErrorListener, MediaPlayer.OnBufferingUpdateListener {
 
-    private final String TAG = "CPAudioPreview";
+    private final String TAG = "CPAudio";
     private boolean firstPrepared = true;
     private MediaPlayer mp = null;
     private String audioSrc = null;
     private CPError err = null;
     private CPCompletion completion = null;
-    private boolean isStreaming = false;//todo to bundle saveinstance
-    private boolean isAutoPlay = false;//todo to bundle saveinstance
-    private AUDIO_STATE audioState = AUDIO_STATE.IDLE;//todo to bundle saveinstance
-    private int duration = -1;//todo to bundle saveinstance
+    private boolean isStreaming = false;
+    private boolean isAutoPlay = false;
+    private AUDIO_STATE audioState = AUDIO_STATE.IDLE;
+    private int duration = -1;
     private boolean progress = false;
     private int progressStartPos = 0;
     private CTRL_MODE ctrlMode = CTRL_MODE.CTRL_PLAY_STOP;
@@ -60,7 +61,7 @@ public class CPAudio extends CPBaseView implements View.OnClickListener, MediaPl
 
     protected void setSource(String src) {
         audioSrc = src;
-        isStreaming = CPUtil.isStreaming(src);//todo save to bundle
+        isStreaming = CPUtil.isStreaming(src);
     }
 
     protected void setCtrlMode(CTRL_MODE mode) {
@@ -68,7 +69,7 @@ public class CPAudio extends CPBaseView implements View.OnClickListener, MediaPl
     }
 
     protected void setOnError(CPError err) {
-        this.err = err;//todo save to bundle
+        this.err = err;
     }
 
     protected void setOnCompletion(CPCompletion completion) {
@@ -87,6 +88,7 @@ public class CPAudio extends CPBaseView implements View.OnClickListener, MediaPl
     }
 
     protected boolean create() {
+        Log.i(TAG, "____create()");
         if (audioSrc == null) {
             fireError("Set audio source. audioUri is null");
             return false;
@@ -149,27 +151,32 @@ public class CPAudio extends CPBaseView implements View.OnClickListener, MediaPl
     private void clickModePlayPause() {
         if (audioState == AUDIO_STATE.STARTED) {
             pause();
-            return;
         }
+//        if (audioState == AUDIO_STATE.STOPPED) {
+//            play();
+//        }
     }
 
     private void clickModePlayStop() {
-        Log.i("X", "ctrl clickModePlayStop()");
         if (audioState == AUDIO_STATE.STARTED) {
             stop();
             return;
         }
 
         if (audioState == AUDIO_STATE.STOPPED) {
-            //todo prepare
             mp.reset();
             create();
-            return;
         }
     }
 
     @Override
     public void onClick(View v) {
+        //state after error IO
+        if (audioState == AUDIO_STATE.IDLE) {
+            if (audioSrc != null)
+                create();
+            return;
+        }
 
         if (audioState == AUDIO_STATE.PREPARED || audioState == AUDIO_STATE.PAUSED || audioState == AUDIO_STATE.PLAYBACK_COMPLETED) {
             play();
@@ -211,7 +218,6 @@ public class CPAudio extends CPBaseView implements View.OnClickListener, MediaPl
 
     @Override
     public void onCompletion(MediaPlayer mp) {
-        Log.i(TAG, "____ONCOMPLETION że zakończono");
         if (audioState != AUDIO_STATE.STARTED) {
             Log.i(TAG, "WYJSCIE " + audioState);
             return;
@@ -221,25 +227,26 @@ public class CPAudio extends CPBaseView implements View.OnClickListener, MediaPl
         setProgress(progressStartPos);
         stopProgress();
         showPlay();
+        mp.seekTo(0);
         fireCompletion(mp);
+
+//        if(ctrlMode == CTRL_MODE.CTRL_PLAY_PAUSE)
+//            stop();
     }
 
     @Override
     public boolean onError(MediaPlayer mp, int what, int extra) {
 
-        if (audioState == AUDIO_STATE.PREPARING) {
+        if (extra == MediaPlayer.MEDIA_ERROR_IO) {
+            Log.e(TAG, "Error MEDIA_ERROR_IO");
+            reset();//idle
+            loaderStop();
+            showPlay();
+            firstPrepared = false;
 
         }
 
-
-        if (what == MediaPlayer.MEDIA_ERROR_IO) {
-            reset();
-            if (audioSrc != null) {
-                //todo sprawdzanie periodyczne sieci, jeśli jest to create()
-            }
-        }
-
-        fireError("onError what: " + what + ", state: " + audioState);
+        fireError("onError what: " + what + ", extra: " + extra + ", state: " + audioState);
         return false;
     }
 
@@ -249,24 +256,14 @@ public class CPAudio extends CPBaseView implements View.OnClickListener, MediaPl
          * Gotowy do odtwarzania
          */
         loaderStop();
-
-        Log.i("X", "________ONPREPARED gotowy do play");
-//        if (mp.isPlaying())
-//            return;
-
         audioState = AUDIO_STATE.PREPARED;
-
         showPlay();
-
         duration = mp.getDuration();
 
-        if (ctrlMode == CTRL_MODE.CTRL_PLAY_STOP) {
-            //start (poza 1 razem gdy inicjalizacja)
-            if (!firstPrepared) {
-                play();
-            }
-            firstPrepared = false;
+        if (!firstPrepared) {
+            play();
         }
+        firstPrepared = false;
 
         if (isAutoPlay) {
             play();
@@ -275,7 +272,7 @@ public class CPAudio extends CPBaseView implements View.OnClickListener, MediaPl
     }
 
     private void play() {
-        Log.i("X", "ctrl PLAY");
+
         if (!(audioState == AUDIO_STATE.PREPARED || audioState == AUDIO_STATE.PAUSED || audioState == AUDIO_STATE.PLAYBACK_COMPLETED)) {
             fireError("Bad audio state for play. audioState: " + audioState);
             return;
@@ -294,7 +291,6 @@ public class CPAudio extends CPBaseView implements View.OnClickListener, MediaPl
     }
 
     private void pause() {
-        Log.i("X", "ctrl PAUSE");
         if (audioState != AUDIO_STATE.STARTED) {
             fireError("Bad audio state for pause. audioState: " + audioState);
             return;
@@ -305,7 +301,6 @@ public class CPAudio extends CPBaseView implements View.OnClickListener, MediaPl
     }
 
     private void stop() {
-        Log.i("X", "ctrl STOP");
         stopProgress();
         audioState = AUDIO_STATE.STOPPED;
         mp.stop();
@@ -313,26 +308,40 @@ public class CPAudio extends CPBaseView implements View.OnClickListener, MediaPl
         showPlay();
     }
 
-    public void destroy() {
+    protected void destroy() {
         stopProgress();
         if (mp != null) {
             mp.release();
             mp = null;
         }
+        audioState = AUDIO_STATE.IDLE;
     }
 
     @Override
     public void onBufferingUpdate(MediaPlayer mp, int percent) {
-        //Log.i("x", "Buforowanie percent: " + percent);
         if (percent == 100)
             return;
-
         loaderStart();
     }
 
     @Override
     protected Parcelable onSaveInstanceState() {
         return super.onSaveInstanceState();
+    }
+
+    protected void onPause() {
+        if (ctrlMode == CTRL_MODE.CTRL_PLAY_PAUSE) {
+            if (audioState == AUDIO_STATE.STARTED) {
+                pause();
+            }
+            return;
+        }
+
+        if (ctrlMode == CTRL_MODE.CTRL_PLAY_STOP) {
+            if (audioState == AUDIO_STATE.STARTED || audioState == AUDIO_STATE.PLAYBACK_COMPLETED) {
+                stop();
+            }
+        }
     }
 
     public enum CTRL_MODE {
