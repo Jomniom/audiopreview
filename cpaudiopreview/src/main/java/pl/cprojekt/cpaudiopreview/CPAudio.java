@@ -1,6 +1,7 @@
 package pl.cprojekt.cpaudiopreview;
 
 import android.content.Context;
+import android.content.res.AssetFileDescriptor;
 import android.media.MediaPlayer;
 import android.os.Message;
 import android.os.Parcelable;
@@ -9,6 +10,7 @@ import android.util.Log;
 import android.view.View;
 
 import java.io.IOException;
+import java.util.Arrays;
 
 
 //todo oprogramować obrót
@@ -24,6 +26,7 @@ public class CPAudio extends CPBaseView implements View.OnClickListener, MediaPl
     private CPCompletion completion = null;
     private boolean isStreaming = false;
     private boolean isAutoPlay = false;
+    private boolean isAsset = false;
     private AUDIO_STATE audioState = AUDIO_STATE.IDLE;
     private int duration = -1;
     private boolean progress = false;
@@ -61,7 +64,14 @@ public class CPAudio extends CPBaseView implements View.OnClickListener, MediaPl
 
     protected void setSource(String src) {
         audioSrc = src;
+        isAsset = false;
         isStreaming = CPUtil.isStreaming(src);
+    }
+
+    protected void setAssetSource(String fileName) {
+        audioSrc = fileName;
+        isAsset = true;
+        isStreaming = false;
     }
 
     protected void setCtrlMode(CTRL_MODE mode) {
@@ -88,7 +98,6 @@ public class CPAudio extends CPBaseView implements View.OnClickListener, MediaPl
     }
 
     protected boolean create() {
-        Log.i(TAG, "____create()");
         if (audioSrc == null) {
             fireError("Set audio source. audioUri is null");
             return false;
@@ -99,7 +108,14 @@ public class CPAudio extends CPBaseView implements View.OnClickListener, MediaPl
         setProgress(progressStartPos);
 
         try {
-            mp.setDataSource(audioSrc);
+            if (isAsset) {
+                AssetFileDescriptor descriptor = ctx.getAssets().openFd(audioSrc);
+                mp.setDataSource(descriptor.getFileDescriptor(), descriptor.getStartOffset(), descriptor.getLength());
+                descriptor.close();
+            } else {
+                mp.setDataSource(audioSrc);
+            }
+
             audioState = AUDIO_STATE.INITIALIZED;
         } catch (IOException e) {
             e.printStackTrace();
@@ -113,8 +129,7 @@ public class CPAudio extends CPBaseView implements View.OnClickListener, MediaPl
             mp.prepareAsync();
             loaderStart();
         } else {
-            boolean exist = CPUtil.localFileExists(audioSrc);
-            if (!exist) {
+            if (!checkLocalFile()) {
                 fireError("Local file does not exist");
                 return false;
             }
@@ -129,6 +144,19 @@ public class CPAudio extends CPBaseView implements View.OnClickListener, MediaPl
         }
 
         return true;
+    }
+
+    private boolean checkLocalFile() {
+        if (isAsset) {
+            try {
+                Arrays.asList(ctx.getResources().getAssets().list("")).contains(audioSrc);
+                return true;
+            } catch (IOException e) {
+                return false;
+            }
+        }
+
+        return CPUtil.localFileExists(audioSrc);
     }
 
     protected void setVolume(float leftVolume, float rightVolume) {
@@ -171,6 +199,10 @@ public class CPAudio extends CPBaseView implements View.OnClickListener, MediaPl
 
     @Override
     public void onClick(View v) {
+
+        invalidate();
+        requestLayout();
+
         //state after error IO
         if (audioState == AUDIO_STATE.IDLE) {
             if (audioSrc != null)
@@ -229,9 +261,6 @@ public class CPAudio extends CPBaseView implements View.OnClickListener, MediaPl
         showPlay();
         mp.seekTo(0);
         fireCompletion(mp);
-
-//        if(ctrlMode == CTRL_MODE.CTRL_PLAY_PAUSE)
-//            stop();
     }
 
     @Override

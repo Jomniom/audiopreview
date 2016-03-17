@@ -74,6 +74,8 @@ public class CPBaseView extends View {
 
     private void initialize(Context ctx) {
         this.ctx = ctx;
+        //setLayerType(View.LAYER_TYPE_HARDWARE);
+
         loaderHandler = new Handler() {
             @Override
             public void handleMessage(Message msg) {
@@ -246,7 +248,6 @@ public class CPBaseView extends View {
         pausePathB.lineTo(pauseW7.x, pauseW7.y);
         pausePathB.lineTo(pauseW8.x, pauseW8.y);
         pausePathB.close();
-
     }
 
     private void iniShapes() {
@@ -275,7 +276,7 @@ public class CPBaseView extends View {
         paintLoader.setStrokeWidth(circleStrokeWidth);
         paintLoader.setStrokeCap(Paint.Cap.ROUND);
 
-        //kształt A tło obręczy odtwarzacza
+        //tło obręczy odtwarzacza
         rectFA = new RectF();
         //progress
         rectFC = new RectF();
@@ -361,6 +362,7 @@ public class CPBaseView extends View {
         invalidate();
     }
 
+
     @Override
     protected synchronized void onDraw(Canvas canvas) {
         super.onDraw(canvas);
@@ -393,12 +395,16 @@ public class CPBaseView extends View {
         if (loaderRun) {
             canvas.drawArc(rectFLoader, loaderPos.x, loaderWidth, false, paintLoader);
         }
-
     }
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+    }
+
+    @Override
+    protected void onSizeChanged(int w, int h, int oldw, int oldh) {
+        super.onSizeChanged(w, h, oldw, oldh);
         calculate();
     }
 

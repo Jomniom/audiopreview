@@ -3,7 +3,9 @@ package pl.cprojekt.cpaudiopreview;
 
 import android.content.Context;
 import android.util.AttributeSet;
+import android.view.View;
 
+//todo show hide methods
 public class CPAudioPreview extends CPAudio {
     public CPAudioPreview(Context context) {
         super(context);
@@ -26,6 +28,9 @@ public class CPAudioPreview extends CPAudio {
         super.setSource(path);
     }
 
+    public void setAssetSource(String fileName) {
+        super.setAssetSource(fileName);
+    }
     /**
      * Set error handler
      *
@@ -100,7 +105,7 @@ public class CPAudioPreview extends CPAudio {
         super.setPlayerProgressColor(color);
     }
 
-    protected void setVolume(float leftVolume, float rightVolume) {
+    public void setVolume(float leftVolume, float rightVolume) {
         super.setVolume(leftVolume, rightVolume);
     }
 
@@ -109,5 +114,17 @@ public class CPAudioPreview extends CPAudio {
      */
     public void onPause() {
         super.onPause();
+    }
+
+    public void show() {
+        setVisibility(View.VISIBLE);
+    }
+
+    public void hide() {
+        super.setVisibility(View.GONE);
+    }
+
+    public void invalide() {
+        super.invalidate();
     }
 }
