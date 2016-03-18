@@ -30,10 +30,10 @@ public class MainActivity extends AppCompatActivity {
         audioPreview1.setAssetSource("red_or_blue.mp3");
         audioPreview1.setMode(CPAudio.CTRL_MODE.CTRL_PLAY_PAUSE);
 
-        audioPreview1.setPlayerBgColor(Color.parseColor("#AB8674"));
-        audioPreview1.setPlayerCtrlColor(Color.parseColor("#5591BF"));
-        audioPreview1.setPlayerProgressColor(Color.parseColor("#3333CC"));
-        audioPreview1.setPlayerCtrlBgColor(Color.parseColor("#5F7183"));
+        audioPreview1.setPlayerBgColor(Color.parseColor("#353E38"));
+        audioPreview1.setPlayerCtrlColor(Color.parseColor("#F05526"));
+        audioPreview1.setPlayerProgressColor(Color.parseColor("#F05526"));
+        audioPreview1.setPlayerCtrlBgColor(Color.parseColor("#6D8C7A"));
 
         audioPreview1.init();
 
@@ -76,13 +76,13 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         //background player color
-//        audioPreview2.setPlayerBgColor(Color.parseColor("#AB8674"));
+        audioPreview2.setPlayerBgColor(Color.parseColor("#9E9086"));
 //        //kontrolki
-//        audioPreview2.setPlayerCtrlColor(Color.parseColor("#5591BF"));
+        audioPreview2.setPlayerCtrlColor(Color.parseColor("#ffffff"));
 //        //progress
-//        audioPreview2.setPlayerProgressColor(Color.parseColor("#3333CC"));
+        audioPreview2.setPlayerProgressColor(Color.parseColor("#23223A"));
 //        //tło progresu
-//        audioPreview2.setPlayerCtrlBgColor(Color.parseColor("#5F7183"));
+        audioPreview2.setPlayerCtrlBgColor(Color.parseColor("#7F6755"));
 
         //control mode
         audioPreview2.setMode(CPAudio.CTRL_MODE.CTRL_PLAY_PAUSE);
