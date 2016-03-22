@@ -25,7 +25,6 @@ public class MainActivity extends AppCompatActivity {
         audioPreview0.init();
 
 
-
         audioPreview1 = (CPAudioPreview) findViewById(R.id.canvas1);
         audioPreview1.setAssetSource("red_or_blue.mp3");
         audioPreview1.setMode(CPAudio.CTRL_MODE.CTRL_PLAY_PAUSE);
@@ -38,27 +37,12 @@ public class MainActivity extends AppCompatActivity {
         audioPreview1.init();
 
 
-
-
         //final String path2 = Environment.getExternalStorageDirectory().getAbsolutePath() + "/bbb.m4a";
         String path = Environment.getExternalStorageDirectory().getAbsolutePath() + "/bbb.m4a";
-        //String path = "http://playready.directtaps.net/smoothstreaming/ISMAAACHEPR/Taxi3_AACHE.mp4";
-        //String path = "http://10.201.224.22/tesy/puchacz_dzwonek.mp3";
-        //final String path3 = "http://10.201.224.22/tesy/fonia.m4a";
-        //path = "http://soundbible.com/grab.php?id=1632&type=wav";
-/*
-        CPAudioPreview audioPreview0 = (CPAudioPreview) findViewById(R.id.canvas0);
-        audioPreview0.setSource(path);
-        audioPreview0.create();
-
-        CPAudioPreview audioPreview1 = (CPAudioPreview) findViewById(R.id.canvas1);
-        audioPreview1.setSource(path);
-        audioPreview1.create();
-*/
 
         audioPreview2 = (CPAudioPreview) findViewById(R.id.canvas2);
 
-        //errors
+        //errors listener
         audioPreview2.setOnError(new CPError() {
             @Override
             public void onError(String error) {
@@ -68,6 +52,7 @@ public class MainActivity extends AppCompatActivity {
                 //audioPreview2.init();
             }
         });
+        //completion play listener
         audioPreview2.setOnCompletion(new CPCompletion() {
             @Override
             public void onEnd(MediaPlayer mp) {
@@ -77,18 +62,17 @@ public class MainActivity extends AppCompatActivity {
         });
         //background player color
         audioPreview2.setPlayerBgColor(Color.parseColor("#9E9086"));
-//        //kontrolki
+        //kontrolki
         audioPreview2.setPlayerCtrlColor(Color.parseColor("#ffffff"));
-//        //progress
+        //progress
         audioPreview2.setPlayerProgressColor(Color.parseColor("#23223A"));
-//        //tło progresu
+        //tło progresu
         audioPreview2.setPlayerCtrlBgColor(Color.parseColor("#7F6755"));
 
         //control mode
         audioPreview2.setMode(CPAudio.CTRL_MODE.CTRL_PLAY_PAUSE);
         //audioPreview2.setMode(CPAudio.CTRL_MODE.CTRL_PLAY_STOP);
         //set audio path
-        ///audioPreview2.setSource(path);
         audioPreview2.setAssetSource("italian_stallion.mp3");
         //initialize
         boolean init = audioPreview2.init();
@@ -102,7 +86,13 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
+
+        if (audioPreview0 != null)
+            audioPreview0.onPause();
+        if (audioPreview1 != null)
+            audioPreview1.onPause();
         if (audioPreview2 != null)
             audioPreview2.onPause();
+
     }
 }

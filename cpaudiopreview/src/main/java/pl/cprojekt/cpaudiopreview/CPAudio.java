@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.res.AssetFileDescriptor;
 import android.media.MediaPlayer;
 import android.os.Message;
-import android.os.Parcelable;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
@@ -353,10 +352,22 @@ public class CPAudio extends CPBaseView implements View.OnClickListener, MediaPl
         loaderStart();
     }
 
-    @Override
-    protected Parcelable onSaveInstanceState() {
-        return super.onSaveInstanceState();
-    }
+//    @Override
+//    protected Parcelable onSaveInstanceState() {
+//        Bundle bundle = new Bundle();
+//        bundle.putParcelable("stateAudioInstance", super.onSaveInstanceState());
+//        CPSaver.save(CPBaseView.class, this);
+//        return bundle;
+//    }
+
+//    @Override
+//    public void onRestoreInstanceState(Parcelable saveState) {
+//        if (saveState instanceof Bundle) {
+//            Bundle bundle = (Bundle) saveState;
+//            saveState = bundle.getParcelable("stateAudioInstance");
+//        }
+//        super.onRestoreInstanceState(saveState);
+//    }
 
     protected void onPause() {
         if (ctrlMode == CTRL_MODE.CTRL_PLAY_PAUSE) {

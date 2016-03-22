@@ -9,10 +9,8 @@ import android.graphics.Path;
 import android.graphics.Point;
 import android.graphics.RectF;
 import android.os.Build;
-import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.os.Parcelable;
 import android.support.v4.content.ContextCompat;
 import android.util.AttributeSet;
 import android.view.View;
@@ -330,32 +328,31 @@ public class CPBaseView extends View {
         invalidate();
     }
 
-    @Override
-    protected Parcelable onSaveInstanceState() {
-        Bundle bundle = new Bundle();
-        bundle.putParcelable("stateInstance", super.onSaveInstanceState());
-        bundle.putSerializable("state", state);
-        bundle.putBoolean("loaderRun", loaderRun);
-        bundle.putInt("progress", progress);
-        CPSaver.save(CPBaseView.class, this);
-        return bundle;
-    }
+//    @Override
+//    protected Parcelable onSaveInstanceState() {
+//        Bundle bundle = new Bundle();
+//        bundle.putParcelable("stateInstance", super.onSaveInstanceState());
+//        bundle.putSerializable("state", state);
+//        bundle.putBoolean("loaderRun", loaderRun);
+//        bundle.putInt("progress", progress);
+//        CPSaver.save(CPBaseView.class, this);
+//        return bundle;
+//    }
 
-    @Override
-    public void onRestoreInstanceState(Parcelable saveState) {
-        if (saveState instanceof Bundle) {
-            Bundle bundle = (Bundle) saveState;
-            state = (VIEW_STATE) bundle.get("state");
-            loaderRun = bundle.getBoolean("loaderRun");
-            progress = bundle.getInt("progress");
-            if (loaderRun) {
-                loaderStart();
-            }
-            saveState = bundle.getParcelable("stateInstance");
-        }
-
-        super.onRestoreInstanceState(saveState);
-    }
+//    @Override
+//    public void onRestoreInstanceState(Parcelable saveState) {
+//        if (saveState instanceof Bundle) {
+//            Bundle bundle = (Bundle) saveState;
+//            state = (VIEW_STATE) bundle.get("state");
+//            loaderRun = bundle.getBoolean("loaderRun");
+//            progress = bundle.getInt("progress");
+//            if (loaderRun) {
+//                loaderStart();
+//            }
+//            saveState = bundle.getParcelable("stateInstance");
+//        }
+//        super.onRestoreInstanceState(saveState);
+//    }
 
     protected void showStop() {
         state = VIEW_STATE.STOP;

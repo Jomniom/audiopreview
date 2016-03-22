@@ -1,11 +1,9 @@
 package pl.cprojekt.cpaudiopreview;
 
-
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.View;
 
-//todo show hide methods
 public class CPAudioPreview extends CPAudio {
     public CPAudioPreview(Context context) {
         super(context);
@@ -31,6 +29,7 @@ public class CPAudioPreview extends CPAudio {
     public void setAssetSource(String fileName) {
         super.setAssetSource(fileName);
     }
+
     /**
      * Set error handler
      *
@@ -116,10 +115,16 @@ public class CPAudioPreview extends CPAudio {
         super.onPause();
     }
 
+    /**
+     * show player
+     */
     public void show() {
         setVisibility(View.VISIBLE);
     }
 
+    /**
+     * hide player
+     */
     public void hide() {
         super.setVisibility(View.GONE);
     }

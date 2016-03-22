@@ -1,5 +1,5 @@
 # Audiopreview
-## Simple audio player
+Simple audio player
 
 <img src="screen_a.jpg" width="400"/>
 
